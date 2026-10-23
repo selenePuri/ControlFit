@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Empleados')}"></head>
+<body>
+<div class="dashboard-container">
+    <aside th:replace="~{fragments :: sidebarAdmin('empleados')}"></aside>
+    <main class="main-content">
+        <header th:replace="~{fragments :: topbar('Módulo de Empleados', 'Personal del gimnasio y sus cuentas de acceso', 'ADMIN', 'fa-shield-halved')}"></header>
+        <div th:replace="~{fragments :: flash}"></div>
+
+        <div class="controls-bar">
+            <span class="muted" th:text="${#lists.size(empleados)} + ' empleado(s)'">0</span>
+            <button type="button" class="btn-primary" data-modal-open="modalEmpleado"><i class="fa-solid fa-user-plus"></i> Nuevo Empleado</button>
+        </div>
+
+        <div class="table-container">
+            <table data-buscable>
+                <thead><tr><th>ID</th><th>DNI</th><th>Nombres y Apellidos</th><th>Teléfono</th><th>Correo</th><th>Contratación</th><th>Usuario</th><th>Rol</th><th>Estado</th><th>Acciones</th></tr></thead>
+                <tbody>
+                <tr th:if="${#lists.isEmpty(empleados)}"><td colspan="10" class="center muted">No hay empleados registrados.</td></tr>
+                <tr th:each="e : ${empleados}">
+                    <td th:text="'#E' + ${e.idEmpleado}">#E1</td>
+                    <td th:text="${e.dni}">00000000</td>
+                    <td th:text="${e.nombres} + ' ' + ${e.apellidos}">Nombre</td>
+                    <td th:text="${e.telefono != null} ? ${e.telefono} : '-'">-</td>
+                    <td th:text="${e.correo != null} ? ${e.correo} : '-'">-</td>
+                    <td th:text="${e.fechaContratacion}">2026-01-01</td>
+                    <td th:text="${e.usuario.usuario}">usuario</td>
+                    <td th:text="${e.usuario.rol}">RECEPCIONISTA</td>
+                    <td><span th:class="${e.estado} ? 'status-active' : 'status-inactive'" th:text="${e.estado} ? 'Activo' : 'Inactivo'">Activo</span></td>
+                    <td>
+                        <div class="acciones">
+                        <button type="button" class="btn-small btn-edit" data-modal-open="modalEditarEmpleado"
+                                th:data-edit-action="@{/admin/empleados/{id}/editar(id=${e.idEmpleado})}"
+                                th:data-dni="${e.dni}" th:data-nombres="${e.nombres}" th:data-apellidos="${e.apellidos}"
+                                th:data-telefono="${e.telefono}" th:data-correo="${e.correo}"
+                                th:data-fecha-contratacion="${e.fechaContratacion}"><i class="fa-solid fa-pen"></i> Editar</button>
+                        <form th:if="${e.estado}" th:action="@{/admin/empleados/{id}/desactivar(id=${e.idEmpleado})}" method="post">
+                            <button type="submit" class="btn-small">Desactivar</button></form>
+                        <form th:unless="${e.estado}" th:action="@{/admin/empleados/{id}/activar(id=${e.idEmpleado})}" method="post">
+                            <button type="submit" class="btn-small">Activar</button></form>
+                    </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+</div>
+
+<div id="modalEmpleado" class="modal-overlay">
+    <div class="modal-box">
+        <h3>Registrar Nuevo Empleado</h3>
+        <form th:action="@{/admin/empleados}" th:object="${form}" method="post">
+            <div class="row2">
+                <div class="field"><label>DNI</label><input type="text" th:field="*{dni}" maxlength="8" pattern="[0-9]{8}" required></div>
+                <div class="field"><label>Teléfono</label><input type="text" th:field="*{telefono}" maxlength="9" pattern="9[0-9]{8}" placeholder="9XXXXXXXX"></div>
+            </div>
+            <div class="row2">
+                <div class="field"><label>Nombres</label><input type="text" th:field="*{nombres}" maxlength="80" required></div>
+                <div class="field"><label>Apellidos</label><input type="text" th:field="*{apellidos}" maxlength="80" required></div>
+            </div>
+            <div class="row2">
+                <div class="field"><label>Correo</label><input type="email" th:field="*{correo}" maxlength="100"></div>
+                <div class="field"><label>Fecha de contratación</label><input type="date" th:field="*{fechaContratacion}" required></div>
+            </div>
+            <p class="muted" style="font-size:12px; margin:6px 0 10px;">Cuenta de acceso del empleado</p>
+            <div class="modo-cuenta">
+                <label><input type="radio" name="modoCuenta" value="NUEVA" checked> Crear cuenta nueva</label>
+                <label><input type="radio" name="modoCuenta" value="EXISTENTE"> Usar usuario existente</label>
+            </div>
+
+            <div data-cuenta="NUEVA">
+                <div class="row2">
+                    <div class="field"><label>Usuario</label><input type="text" th:field="*{usuario}" maxlength="50" required></div>
+                    <div class="field"><label>Contraseña (mín. 6)</label><input type="password" name="clave" minlength="6" maxlength="72" required></div>
+                </div>
+                <div class="field"><label>Rol</label>
+                    <select th:field="*{rol}" required>
+                        <option th:each="r : ${roles}" th:value="${r}" th:text="${r}">RECEPCIONISTA</option>
+                    </select></div>
+            </div>
+
+            <div data-cuenta="EXISTENTE" hidden>
+                <div class="field"><label>Usuario existente</label>
+                    <select name="idUsuario" required disabled>
+                        <option value="">— Seleccione —</option>
+                        <option th:each="u : ${usuariosDisponibles}" th:value="${u.idUsuario}"
+                                th:text="${u.usuario} + ' · ' + ${u.rol}">usuario</option>
+                    </select></div>
+                <p class="muted" style="font-size:12px; margin:0 0 10px;" th:if="${#lists.isEmpty(usuariosDisponibles)}">
+                    No hay usuarios disponibles: todos los usuarios activos con rol de empleado ya tienen un empleado asociado.</p>
+                <p class="muted" style="font-size:12px; margin:0 0 10px;" th:unless="${#lists.isEmpty(usuariosDisponibles)}">
+                    Solo se listan usuarios activos (administrador, recepcionista o entrenador) que no están vinculados a otro empleado.</p>
+            </div>
+
+            <div class="modal-actions">
+                <button type="button" class="btn-ghost" data-modal-close>Cancelar</button>
+                <button type="submit" class="btn-save">Guardar Empleado</button>
+            </div>
+        </form>
+    </div>
+</div>
+<div id="modalEditarEmpleado" class="modal-overlay">
+    <div class="modal-box">
+        <h3>Editar Empleado</h3>
+        <form th:action="@{/admin/empleados/0/editar}" method="post">
+            <div class="row2">
+                <div class="field"><label>DNI</label><input type="text" name="dni" maxlength="8" pattern="[0-9]{8}" required></div>
+                <div class="field"><label>Teléfono</label><input type="text" name="telefono" maxlength="9" pattern="9[0-9]{8}" placeholder="9XXXXXXXX"></div>
+            </div>
+            <div class="row2">
+                <div class="field"><label>Nombres</label><input type="text" name="nombres" maxlength="80" required></div>
+                <div class="field"><label>Apellidos</label><input type="text" name="apellidos" maxlength="80" required></div>
+            </div>
+            <div class="row2">
+                <div class="field"><label>Correo</label><input type="email" name="correo" maxlength="100"></div>
+                <div class="field"><label>Fecha de contratación</label><input type="date" name="fechaContratacion" required></div>
+            </div>
+            <p class="muted" style="font-size:12px;">El usuario y el rol se cambian en la sección Usuarios.</p>
+            <div class="modal-actions">
+                <button type="button" class="btn-ghost" data-modal-close>Cancelar</button>
+                <button type="submit" class="btn-save">Guardar cambios</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

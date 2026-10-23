@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Usuarios')}"></head>
+<body>
+<div class="dashboard-container">
+    <aside th:replace="~{fragments :: sidebarAdmin('usuarios')}"></aside>
+    <main class="main-content">
+        <header th:replace="~{fragments :: topbar('Gestión de Usuarios', 'Cuentas de acceso y roles del sistema', 'ADMIN', 'fa-shield-halved')}"></header>
+        <div th:replace="~{fragments :: flash}"></div>
+
+        <div class="controls-bar">
+            <span class="muted" th:text="${#lists.size(usuarios)} + ' usuario(s)'">0 usuarios</span>
+            <button type="button" class="btn-primary" data-modal-open="modalUsuario"><i class="fa-solid fa-user-plus"></i> Nuevo Usuario</button>
+        </div>
+
+        <div class="table-container">
+            <table data-buscable>
+                <thead><tr><th>ID</th><th>Usuario</th><th>Rol</th><th>Estado</th><th>Acciones</th></tr></thead>
+                <tbody>
+                <tr th:if="${#lists.isEmpty(usuarios)}"><td colspan="5" class="center muted">No hay usuarios registrados.</td></tr>
+                <tr th:each="u : ${usuarios}">
+                    <td th:text="'#U' + ${u.idUsuario}">#U1</td>
+                    <td th:text="${u.usuario}">admin</td>
+                    <td th:text="${u.rol}">ADMINISTRADOR</td>
+                    <td><span th:class="${u.estado} ? 'status-active' : 'status-inactive'" th:text="${u.estado} ? 'Activo' : 'Inactivo'">Activo</span></td>
+                    <td>
+                        <div class="acciones">
+                        <button type="button" class="btn-small btn-edit" data-modal-open="modalEditarUsuario"
+                                th:data-edit-action="@{/admin/usuarios/{id}/editar(id=${u.idUsuario})}"
+                                th:data-usuario="${u.usuario}" th:data-rol="${u.rol}"><i class="fa-solid fa-pen"></i> Editar</button>
+                        <form th:if="${u.estado}" th:action="@{/admin/usuarios/{id}/desactivar(id=${u.idUsuario})}" method="post">
+                            <button type="submit" class="btn-small">Desactivar</button></form>
+                        <form th:unless="${u.estado}" th:action="@{/admin/usuarios/{id}/activar(id=${u.idUsuario})}" method="post">
+                            <button type="submit" class="btn-small">Activar</button></form>
+                    </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+</div>
+
+<div id="modalUsuario" class="modal-overlay">
+    <div class="modal-box">
+        <h3>Registrar Nuevo Usuario</h3>
+        <form th:action="@{/admin/usuarios}" th:object="${form}" method="post">
+            <div class="field"><label>Nombre de usuario</label><input type="text" th:field="*{usuario}" maxlength="50" required></div>
+            <div class="field"><label>Contraseña (mín. 6)</label><input type="password" name="clave" minlength="6" maxlength="72" required></div>
+            <div class="field"><label>Rol</label>
+                <select th:field="*{rol}" required>
+                    <option th:each="r : ${roles}" th:value="${r}" th:text="${r}">ADMINISTRADOR</option>
+                </select></div>
+            <div class="modal-actions">
+                <button type="button" class="btn-ghost" data-modal-close>Cancelar</button>
+                <button type="submit" class="btn-save">Guardar Usuario</button>
+            </div>
+        </form>
+    </div>
+</div>
+<div id="modalEditarUsuario" class="modal-overlay">
+    <div class="modal-box">
+        <h3>Editar Usuario</h3>
+        <form th:action="@{/admin/usuarios/0/editar}" method="post">
+            <div class="field"><label>Nombre de usuario</label><input type="text" name="usuario" maxlength="50" required></div>
+            <div class="field"><label>Rol</label>
+                <select name="rol" required>
+                    <option th:each="r : ${roles}" th:value="${r}" th:text="${r}">ADMINISTRADOR</option>
+                </select></div>
+            <p class="muted" style="font-size:12px;">La contraseña y el estado no cambian aquí. Tu propia cuenta no se puede editar desde esta pantalla.</p>
+            <div class="modal-actions">
+                <button type="button" class="btn-ghost" data-modal-close>Cancelar</button>
+                <button type="submit" class="btn-save">Guardar cambios</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

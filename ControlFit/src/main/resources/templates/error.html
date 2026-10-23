@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Error')}"></head>
+<body class="centrado">
+<div class="auth-card center">
+    <h2 class="logo">CONTROL<span>FIT</span></h2>
+    <p style="font-size:48px; color:var(--primary-red); margin:10px 0;"><i class="fa-solid fa-triangle-exclamation"></i></p>
+    <h3>Algo salió mal</h3>
+    <p class="sub" style="margin-top:8px;">No pudimos completar la solicitud (código <span th:text="${status}">500</span>).</p>
+    <p class="sub" style="margin-top:8px; font-size:12px; word-break:break-all;"
+   th:text="${exception} + ' → ' + ${message}"></p>
+    <a th:href="@{/}" class="btn-primary" style="justify-content:center;">Volver al inicio</a>
+</div>
+</body>
+</html>

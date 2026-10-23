@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Promociones')}"></head>
+<body>
+<div class="dashboard-container">
+    <aside th:replace="~{fragments :: sidebarAdmin('promociones')}"></aside>
+    <main class="main-content">
+        <header th:replace="~{fragments :: topbar('Módulo de Promociones', 'Descuentos aplicables a los planes de membresía', 'ADMIN', 'fa-shield-halved')}"></header>
+        <div th:replace="~{fragments :: flash}"></div>
+
+        <div class="controls-bar">
+            <span class="muted" th:text="${#lists.size(promociones)} + ' promoción(es)'">0</span>
+            <button type="button" class="btn-primary" data-modal-open="modalPromo"><i class="fa-solid fa-plus"></i> Nueva Promoción</button>
+        </div>
+
+        <div class="table-container">
+            <table data-buscable>
+                <thead><tr><th>ID</th><th>Nombre</th><th>Descripción</th><th>Descuento</th><th>Aplica a</th><th>Inicio</th><th>Fin</th><th>Estado</th><th>Acciones</th></tr></thead>
+                <tbody>
+                <tr th:if="${#lists.isEmpty(promociones)}"><td colspan="9" class="center muted">No hay promociones registradas.</td></tr>
+                <tr th:each="p : ${promociones}">
+                    <td th:text="'#PR' + ${p.idPromocion}">#PR1</td>
+                    <td th:text="${p.nombre}">Nombre</td>
+                    <td th:text="${p.descripcion != null} ? ${p.descripcion} : '-'">-</td>
+                    <td th:text="${p.tipoDescuento.name() == 'PORCENTAJE'} ? ${p.valorDescuento} + '%' : 'S/ ' + ${p.valorDescuento}">10%</td>
+                    <td><span th:each="t, it : ${p.tiposMembresia}" th:text="${#strings.replace(t.nombre, '_', ' ')} + (${it.last} ? '' : ', ')">MENSUAL</span></td>
+                    <td th:text="${p.fechaInicio}">2026-01-01</td>
+                    <td th:text="${p.fechaFin}">2026-12-31</td>
+                    <td><span th:class="${p.estado} ? 'status-active' : 'status-inactive'" th:text="${p.estado} ? 'Activa' : 'Inactiva'">Activa</span></td>
+                    <td>
+                        <div class="acciones">
+                        <button type="button" class="btn-small btn-edit" data-modal-open="modalEditarPromo"
+                                th:data-edit-action="@{/admin/promociones/{id}/editar(id=${p.idPromocion})}"
+                                th:data-nombre="${p.nombre}" th:data-descripcion="${p.descripcion}"
+                                th:data-tipo-descuento="${p.tipoDescuento.name()}" th:data-valor-descuento="${p.valorDescuento}"
+                                th:data-fecha-inicio="${p.fechaInicio}" th:data-fecha-fin="${p.fechaFin}"
+                                th:data-estado="${p.estado}"
+                                th:data-tipos-membresia="${#strings.listJoin(p.tiposMembresia.![idTipo], ',')}"><i class="fa-solid fa-pen"></i> Editar</button>
+                        <form th:if="${p.estado}" th:action="@{/admin/promociones/{id}/desactivar(id=${p.idPromocion})}" method="post">
+                            <button type="submit" class="btn-small">Desactivar</button></form>
+                        <form th:unless="${p.estado}" th:action="@{/admin/promociones/{id}/activar(id=${p.idPromocion})}" method="post">
+                            <button type="submit" class="btn-small">Activar</button></form>
+                    </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+</div>
+
+<div id="modalPromo" class="modal-overlay">
+    <div class="modal-box">
+        <h3>Registrar Nueva Promoción</h3>
+        <form th:action="@{/admin/promociones}" th:object="${form}" method="post">
+            <div class="field"><label>Nombre</label><input type="text" th:field="*{nombre}" maxlength="80" required placeholder="Ej. Descuento Verano 2026"></div>
+            <div class="field"><label>Descripción</label><input type="text" th:field="*{descripcion}" maxlength="200" placeholder="Breve detalle de la oferta..."></div>
+            <div class="row2">
+                <div class="field"><label>Tipo de descuento</label>
+                    <select th:field="*{tipoDescuento}" required>
+                        <option value="PORCENTAJE">Porcentaje (%)</option>
+                        <option value="MONTO_FIJO">Monto fijo (S/)</option>
+                    </select></div>
+                <div class="field"><label>Valor</label><input type="number" step="0.01" min="0.01" th:field="*{valorDescuento}" required></div>
+            </div>
+            <div class="row2">
+                <div class="field"><label>Fecha inicio</label><input type="date" th:field="*{fechaInicio}" required></div>
+                <div class="field"><label>Fecha fin</label><input type="date" th:field="*{fechaFin}" required></div>
+            </div>
+            <div class="field"><label>Aplica a (Ctrl/Cmd para elegir varios)</label>
+                <select th:field="*{tiposMembresia}" multiple required>
+                    <option th:each="t : ${tipos}" th:value="${t.idTipo}" th:text="${#strings.replace(t.nombre, '_', ' ')}">MENSUAL</option>
+                </select></div>
+            <div class="field"><label>Estado</label>
+                <select th:field="*{estado}">
+                    <option value="true">Activa</option>
+                    <option value="false">Inactiva</option>
+                </select></div>
+            <div class="modal-actions">
+                <button type="button" class="btn-ghost" data-modal-close>Cancelar</button>
+                <button type="submit" class="btn-save">Guardar Promoción</button>
+            </div>
+        </form>
+    </div>
+</div>
+<div id="modalEditarPromo" class="modal-overlay">
+    <div class="modal-box">
+        <h3>Editar Promoción</h3>
+        <form th:action="@{/admin/promociones/0/editar}" method="post">
+            <div class="field"><label>Nombre</label><input type="text" name="nombre" maxlength="80" required></div>
+            <div class="field"><label>Descripción</label><input type="text" name="descripcion" maxlength="200"></div>
+            <div class="row2">
+                <div class="field"><label>Tipo de descuento</label>
+                    <select name="tipoDescuento" required>
+                        <option value="PORCENTAJE">Porcentaje (%)</option>
+                        <option value="MONTO_FIJO">Monto fijo (S/)</option>
+                    </select></div>
+                <div class="field"><label>Valor</label><input type="number" step="0.01" min="0.01" name="valorDescuento" required></div>
+            </div>
+            <div class="row2">
+                <div class="field"><label>Fecha inicio</label><input type="date" name="fechaInicio" required></div>
+                <div class="field"><label>Fecha fin</label><input type="date" name="fechaFin" required></div>
+            </div>
+            <div class="field"><label>Aplica a (Ctrl/Cmd para elegir varios)</label>
+                <select name="tiposMembresia" multiple required>
+                    <option th:each="t : ${tipos}" th:value="${t.idTipo}" th:text="${#strings.replace(t.nombre, '_', ' ')}">MENSUAL</option>
+                </select></div>
+            <div class="field"><label>Estado</label>
+                <select name="estado">
+                    <option value="true">Activa</option>
+                    <option value="false">Inactiva</option>
+                </select></div>
+            <div class="modal-actions">
+                <button type="button" class="btn-ghost" data-modal-close>Cancelar</button>
+                <button type="submit" class="btn-save">Guardar cambios</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

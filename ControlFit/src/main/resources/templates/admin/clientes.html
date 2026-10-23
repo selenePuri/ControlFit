@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Clientes')}"></head>
+<body>
+<div class="dashboard-container">
+    <aside th:replace="~{fragments :: sidebarAdmin('clientes')}"></aside>
+    <main class="main-content">
+        <header th:replace="~{fragments :: topbar('Módulo de Clientes', 'Gestión y registro general de socios del gimnasio', 'ADMIN', 'fa-shield-halved')}"></header>
+        <div th:replace="~{fragments :: flash}"></div>
+
+        <div class="controls-bar">
+            <span class="muted" th:text="${#lists.size(clientes)} + ' cliente(s)'">0</span>
+            <button type="button" class="btn-primary" data-modal-open="modalCliente"><i class="fa-solid fa-user-plus"></i> Nuevo Cliente</button>
+        </div>
+
+        <div class="table-container">
+            <table data-buscable>
+                <thead><tr><th>ID</th><th>Nombres y Apellidos</th><th>DNI</th><th>Teléfono</th><th>Correo</th><th>Cuenta</th><th>Estado</th><th>Acciones</th></tr></thead>
+                <tbody>
+                <tr th:if="${#lists.isEmpty(clientes)}"><td colspan="8" class="center muted">No hay clientes registrados.</td></tr>
+                <tr th:each="c : ${clientes}">
+                    <td th:text="'#C' + ${c.idCliente}">#C1</td>
+                    <td th:text="${c.nombres} + ' ' + ${c.apellidos}">Nombre</td>
+                    <td th:text="${c.dni}">00000000</td>
+                    <td th:text="${c.telefono != null} ? ${c.telefono} : '-'">-</td>
+                    <td th:text="${c.correo != null} ? ${c.correo} : '-'">-</td>
+                    <td th:text="${c.usuario != null} ? 'Sí' : 'No'">No</td>
+                    <td><span th:class="${c.estado} ? 'status-active' : 'status-inactive'" th:text="${c.estado} ? 'Activo' : 'Inactivo'">Activo</span></td>
+                    <td>
+                        <div class="acciones">
+                        <button type="button" class="btn-small btn-edit" data-modal-open="modalEditarCliente"
+                                th:data-edit-action="@{/admin/clientes/{id}/editar(id=${c.idCliente})}"
+                                th:data-nombres="${c.nombres}" th:data-apellidos="${c.apellidos}" th:data-dni="${c.dni}"
+                                th:data-telefono="${c.telefono}" th:data-correo="${c.correo}"
+                                th:data-fecha-nacimiento="${c.fechaNacimiento}"><i class="fa-solid fa-pen"></i> Editar</button>
+                        <form th:if="${c.estado}" th:action="@{/admin/clientes/{id}/desactivar(id=${c.idCliente})}" method="post">
+                            <button type="submit" class="btn-small">Desactivar</button></form>
+                        <form th:unless="${c.estado}" th:action="@{/admin/clientes/{id}/activar(id=${c.idCliente})}" method="post">
+                            <button type="submit" class="btn-small">Activar</button></form>
+                    </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+</div>
+
+<div id="modalCliente" class="modal-overlay">
+    <div class="modal-box">
+        <h3>Registrar Nuevo Cliente</h3>
+        <form th:action="@{/admin/clientes}" th:object="${form}" method="post">
+            <div class="row2">
+                <div class="field"><label>Nombres</label><input type="text" th:field="*{nombres}" maxlength="80" required></div>
+                <div class="field"><label>Apellidos</label><input type="text" th:field="*{apellidos}" maxlength="80" required></div>
+            </div>
+            <div class="row2">
+                <div class="field"><label>DNI</label><input type="text" th:field="*{dni}" maxlength="8" pattern="[0-9]{8}" required></div>
+                <div class="field"><label>Teléfono</label><input type="text" th:field="*{telefono}" maxlength="9" pattern="9[0-9]{8}" placeholder="9XXXXXXXX"></div>
+            </div>
+            <div class="row2">
+                <div class="field"><label>Correo</label><input type="email" th:field="*{correo}" maxlength="100"></div>
+                <div class="field"><label>Fecha de nacimiento</label><input type="date" th:field="*{fechaNacimiento}"></div>
+            </div>
+            <div class="field"><label>Estado</label>
+                <select th:field="*{estado}">
+                    <option value="true">Activo</option>
+                    <option value="false">Inactivo</option>
+                </select></div>
+            <div class="modal-actions">
+                <button type="button" class="btn-ghost" data-modal-close>Cancelar</button>
+                <button type="submit" class="btn-save">Guardar Cliente</button>
+            </div>
+        </form>
+    </div>
+</div>
+<div id="modalEditarCliente" class="modal-overlay">
+    <div class="modal-box">
+        <h3>Editar Cliente</h3>
+        <form th:action="@{/admin/clientes/0/editar}" method="post">
+            <div class="row2">
+                <div class="field"><label>Nombres</label><input type="text" name="nombres" maxlength="80" required></div>
+                <div class="field"><label>Apellidos</label><input type="text" name="apellidos" maxlength="80" required></div>
+            </div>
+            <div class="row2">
+                <div class="field"><label>DNI</label><input type="text" name="dni" maxlength="8" pattern="[0-9]{8}" required></div>
+                <div class="field"><label>Teléfono</label><input type="text" name="telefono" maxlength="9" pattern="9[0-9]{8}" placeholder="9XXXXXXXX"></div>
+            </div>
+            <div class="row2">
+                <div class="field"><label>Correo</label><input type="email" name="correo" maxlength="100"></div>
+                <div class="field"><label>Fecha de nacimiento</label><input type="date" name="fechaNacimiento"></div>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-ghost" data-modal-close>Cancelar</button>
+                <button type="submit" class="btn-save">Guardar cambios</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

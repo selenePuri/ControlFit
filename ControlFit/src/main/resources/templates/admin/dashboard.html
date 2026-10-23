@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments :: head('Panel Administrador')}"></head>
+<body>
+<div class="dashboard-container">
+    <aside th:replace="~{fragments :: sidebarAdmin('dashboard')}"></aside>
+    <main class="main-content">
+        <header class="topbar">
+            <div>
+                <h1>Panel de Administración</h1>
+                <p>Bienvenido de nuevo, <strong sec:authentication="name">admin</strong></p>
+            </div>
+            <div class="user-badge"><i class="fa-solid fa-user-shield"></i> <span>ADMIN</span></div>
+        </header>
+
+        <section class="stats-grid">
+            <div class="card-stat">
+                <div class="stat-icon red"><i class="fa-solid fa-users"></i></div>
+                <div class="stat-details"><h3>Clientes Activos</h3><p class="stat-number" th:text="${resumen.clientesActivos}">0</p></div>
+            </div>
+            <div class="card-stat">
+                <div class="stat-icon dark"><i class="fa-solid fa-id-card-clip"></i></div>
+                <div class="stat-details"><h3>Membresías Vigentes</h3><p class="stat-number" th:text="${resumen.membresiasVigentes}">0</p></div>
+            </div>
+            <div class="card-stat">
+                <div class="stat-icon red"><i class="fa-solid fa-dollar-sign"></i></div>
+                <div class="stat-details"><h3>Ingresos del Mes</h3>
+                    <p class="stat-number">S/ <span th:text="${#numbers.formatDecimal(resumen.ingresosDelMes, 1, 'COMMA', 2, 'POINT')}">0.00</span></p></div>
+            </div>
+            <div class="card-stat">
+                <div class="stat-icon dark"><i class="fa-solid fa-user-tie"></i></div>
+                <div class="stat-details"><h3>Personal Activo</h3><p class="stat-number" th:text="${resumen.empleadosActivos}">0</p></div>
+            </div>
+        </section>
+
+        <section class="quick-actions">
+            <h2>Gestión Rápida del Sistema</h2>
+            <div class="actions-grid">
+                <a th:href="@{/admin/usuarios}" class="action-card">
+                    <i class="fa-solid fa-user-gear"></i><h4>Gestión de Usuarios</h4>
+                    <p>Crear, activar y asignar roles al sistema.</p></a>
+                <a th:href="@{/admin/empleados}" class="action-card">
+                    <i class="fa-solid fa-id-card"></i><h4>Gestión de Empleados</h4>
+                    <p>Administrar entrenadores y recepcionistas.</p></a>
+                <a th:href="@{/admin/promociones}" class="action-card">
+                    <i class="fa-solid fa-gift"></i><h4>Promociones</h4>
+                    <p>Configurar descuentos para las membresías.</p></a>
+            </div>
+        </section>
+    </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Iniciar Sesión')}"></head>
+<body class="centrado">
+<div class="auth-card">
+    <h2 class="logo">CONTROL<span>FIT</span></h2>
+    <p class="sub">Acceso General al Sistema</p>
+
+    <div class="flash err" th:if="${param.error}">
+        <i class="fa-solid fa-triangle-exclamation"></i> Usuario o contraseña incorrectos, o cuenta inactiva.
+    </div>
+    <div class="flash err" th:if="${param.rol}">
+        <i class="fa-solid fa-triangle-exclamation"></i> Tu rol no tiene un panel habilitado.
+    </div>
+    <div class="flash ok" th:if="${param.logout}">
+        <i class="fa-solid fa-circle-check"></i> Sesión cerrada correctamente.
+    </div>
+    <div class="flash ok" th:if="${param.registrado}">
+        <i class="fa-solid fa-circle-check"></i> ¡Cuenta creada con éxito! Ya puedes iniciar sesión.
+    </div>
+
+    <form th:action="@{/login}" method="post">
+        <div class="field">
+            <label for="usuario">Nombre de Usuario o gmail</label>
+            <input type="text" id="usuario" name="usuario" required autofocus placeholder="Ej. admin">
+        </div>
+        <div class="field">
+            <label for="clave">Contraseña</label>
+            <input type="password" id="clave" name="clave" required placeholder="••••••••">
+        </div>
+        <button type="submit" class="btn-save">Iniciar Sesión</button>
+    </form>
+
+    <div class="enlace">
+        <p class="muted" style="font-size:13px;">¿Eres cliente nuevo?</p>
+        <a th:href="@{/registro}">Crear una cuenta aquí</a>
+    </div>
+</div>
+</body>
+</html>

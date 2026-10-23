@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Crear cuenta')}"></head>
+<body class="centrado">
+<div class="auth-card" style="width:520px;">
+    <h2 class="logo">CONTROL<span>FIT</span></h2>
+    <p class="sub">Crea tu cuenta de cliente</p>
+
+    <div class="flash err" th:if="${error}">
+        <i class="fa-solid fa-triangle-exclamation"></i> <span th:text="${error}">error</span>
+    </div>
+
+    <form th:action="@{/registro}" th:object="${form}" method="post">
+        <div class="row2">
+            <div class="field"><label>DNI</label>
+                <input type="text" th:field="*{dni}" maxlength="8" pattern="[0-9]{8}" required placeholder="8 dígitos"></div>
+            <div class="field"><label>Teléfono</label>
+                <input type="text" th:field="*{telefono}" maxlength="9" pattern="9[0-9]{8}" placeholder="9XXXXXXXX"></div>
+        </div>
+        <div class="row2">
+            <div class="field"><label>Nombres</label>
+                <input type="text" th:field="*{nombres}" maxlength="80" required></div>
+            <div class="field"><label>Apellidos</label>
+                <input type="text" th:field="*{apellidos}" maxlength="80" required></div>
+        </div>
+        <div class="field"><label>Correo (será tu usuario)</label>
+            <input type="email" th:field="*{correo}" maxlength="50" required placeholder="correo@ejemplo.com"></div>
+        <div class="row2">
+            <div class="field"><label>Fecha de nacimiento</label>
+                <input type="date" th:field="*{fechaNacimiento}"></div>
+            <div class="field"><label>Contraseña (mín. 6)</label>
+                <input type="password" name="clave" minlength="6" maxlength="72" required placeholder="••••••••"></div>
+        </div>
+        <button type="submit" class="btn-save">Crear cuenta</button>
+    </form>
+
+    <div class="enlace">
+        <a th:href="@{/login}">Volver al inicio de sesión</a>
+    </div>
+</div>
+</body>
+</html>

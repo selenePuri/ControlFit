@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Pagos')}"></head>
+<body>
+<div class="dashboard-container">
+    <aside th:replace="~{fragments :: sidebarAdmin('pagos')}"></aside>
+    <main class="main-content">
+        <header th:replace="~{fragments :: topbar('Módulo de Pagos', 'Historial de cobros del gimnasio', 'ADMIN', 'fa-shield-halved')}"></header>
+        <div th:replace="~{fragments :: flash}"></div>
+
+        <div class="controls-bar">
+            <span class="muted" th:text="${#lists.size(pagos)} + ' pago(s)'">0</span>
+            <button type="button" class="btn-primary" data-modal-open="modalPago"><i class="fa-solid fa-plus"></i> Registrar Pago</button>
+        </div>
+
+        <div class="table-container">
+            <table data-buscable>
+                <thead><tr><th>ID Pago</th><th>N° Membresía</th><th>Cliente</th><th>Fecha de Pago</th><th>Monto</th><th>Devuelto</th><th>Saldo</th><th>Método</th><th>Estado</th><th>Acciones</th></tr></thead>
+                <tbody>
+                <tr th:if="${#lists.isEmpty(pagos)}"><td colspan="10" class="center muted">No hay pagos registrados.</td></tr>
+                <tr th:each="p : ${pagos}">
+                    <td th:text="'#P' + ${p.idPago}">#P1</td>
+                    <td th:text="'#M' + ${p.membresia.idMembresia}">#M1</td>
+                    <td th:text="${p.membresia.cliente.nombres} + ' ' + ${p.membresia.cliente.apellidos}">Cliente</td>
+                    <td th:text="${#temporals.format(p.fechaPago, 'yyyy-MM-dd HH:mm')}">2026-01-01 10:00</td>
+                    <td>S/ <span th:text="${#numbers.formatDecimal(p.monto, 1, 'COMMA', 2, 'POINT')}">0.00</span></td>
+                    <td th:text="${saldos[p.idPago].devuelto.signum() > 0} ? 'S/ ' + ${#numbers.formatDecimal(saldos[p.idPago].devuelto, 1, 'COMMA', 2, 'POINT')} : '-'">-</td>
+                    <td th:text="${p.estado.name() == 'PAGADO'} ? 'S/ ' + ${#numbers.formatDecimal(saldos[p.idPago].saldo, 1, 'COMMA', 2, 'POINT')} : '-'">-</td>
+                    <td th:text="${p.metodoPago}">EFECTIVO</td>
+                    <td><span th:class="${p.estado.name() == 'PAGADO'} ? 'status-active' : 'status-inactive'" th:text="${p.estado}">PAGADO</span></td>
+                    <td>
+                        <a th:if="${saldos[p.idPago].saldo.signum() > 0}" th:href="@{/admin/devoluciones(pago=${p.idPago})}" class="btn-small btn-edit">
+                            <i class="fa-solid fa-rotate-left"></i> Devolver</a>
+                        <span th:unless="${saldos[p.idPago].saldo.signum() > 0}" class="muted">—</span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+</div>
+
+<div id="modalPago" class="modal-overlay">
+    <div class="modal-box">
+        <h3>Registrar Pago</h3>
+        <form th:action="@{/admin/pagos}" th:object="${form}" method="post">
+            <div class="field"><label>Membresía</label>
+                <select th:field="*{idMembresia}" required>
+                    <option value="">— Seleccione —</option>
+                    <option th:each="m : ${membresias}" th:value="${m.idMembresia}"
+                            th:text="'#M' + ${m.idMembresia} + ' · ' + ${m.cliente.nombres} + ' ' + ${m.cliente.apellidos} + ' · ' + ${#strings.replace(m.tipoMembresia.nombre, '_', ' ')}">m</option>
+                </select></div>
+            <div class="row2">
+                <div class="field"><label>Monto (S/)</label><input type="number" step="0.01" min="0.01" th:field="*{monto}" required></div>
+                <div class="field"><label>Método de pago</label>
+                    <select th:field="*{metodoPago}" required>
+                        <option th:each="mp : ${metodos}" th:value="${mp}" th:text="${mp}">EFECTIVO</option>
+                    </select></div>
+            </div>
+            <div class="field"><label>Estado</label>
+                <select th:field="*{estado}">
+                    <option th:each="e : ${estados}" th:value="${e}" th:text="${e}">PAGADO</option>
+                </select></div>
+            <div class="modal-actions">
+                <button type="button" class="btn-ghost" data-modal-close>Cancelar</button>
+                <button type="submit" class="btn-save">Guardar Pago</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

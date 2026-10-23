@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments :: head('Mi Portal')}"></head>
+<body>
+<div class="wrap">
+
+    <header class="portal-header">
+        <div>
+            <h1>CONTROL<span>FIT</span></h1>
+            <p class="muted" style="font-size:14px;">Bienvenido(a),
+                <strong th:if="${cliente != null}" th:text="${cliente.nombres} + ' ' + ${cliente.apellidos}">Cliente</strong>
+                <strong th:if="${cliente == null}" sec:authentication="name">usuario</strong></p>
+        </div>
+        <div class="nav">
+            <a href="#datos"><i class="fa-solid fa-user-pen"></i> Mis datos</a>
+            <a href="#clave"><i class="fa-solid fa-key"></i> Contraseña</a>
+            <form th:action="@{/logout}" method="post" style="margin:0;">
+                <button type="submit"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</button>
+            </form>
+        </div>
+    </header>
+
+    <div th:replace="~{fragments :: flash}"></div>
+
+    <div class="flash err" th:if="${cliente == null}">
+        <i class="fa-solid fa-circle-info"></i> Tu usuario aún no tiene un perfil de cliente asociado. Pide ayuda en recepción.
+    </div>
+
+    <div class="panel" style="box-shadow:0 4px 20px rgba(0,0,0,.3);">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h3 style="font-size:18px;"><i class="fa-solid fa-id-card"></i> Mi Membresía Activa</h3>
+            <span th:class="${membresia != null} ? 'status-active' : 'status-inactive'"
+                  th:text="${membresia != null} ? 'ACTIVA' : 'INACTIVA'">INACTIVA</span>
+        </div>
+        <div class="datos-grid">
+            <div><span class="muted">Plan Contratado</span>
+                <p th:text="${membresia != null} ? ${#strings.replace(membresia.tipoMembresia.nombre, '_', ' ')} : 'Sin membresía activa'">-</p></div>
+            <div><span class="muted">Inicio</span>
+                <p th:text="${membresia != null} ? ${membresia.fechaInicio} : '-'">-</p></div>
+            <div><span class="muted">Fecha de Vencimiento</span>
+                <p th:text="${membresia != null} ? ${membresia.fechaFin} : '-'">-</p></div>
+            <div><span class="muted">Días restantes</span>
+                <p th:text="${diasRestantes != null} ? ${diasRestantes} : '-'">-</p></div>
+            <div><span class="muted">Monto Abonado</span>
+                <p th:text="${membresia != null} ? 'S/ ' + ${#numbers.formatDecimal(membresia.precioFinal, 1, 'COMMA', 2, 'POINT')} : 'S/ 0.00'">S/ 0.00</p></div>
+        </div>
+    </div>
+
+    <section class="stats-grid resumen-asistencias" th:if="${cliente != null}">
+        <div class="card-stat">
+            <div class="stat-icon red"><i class="fa-solid fa-calendar-check"></i></div>
+            <div class="stat-details"><h3>Total de asistencias</h3>
+                <p class="stat-number" th:text="${totalAsistencias}">0</p></div>
+        </div>
+        <div class="card-stat">
+            <div class="stat-icon dark"><i class="fa-solid fa-calendar-day"></i></div>
+            <div class="stat-details"><h3>Asistencias del mes
+                <span class="muted" th:text="'(' + ${#temporals.format(hoy, 'MMMM yyyy')} + ')'">(octubre 2026)</span></h3>
+                <p class="stat-number" th:text="${asistenciasMes}">0</p></div>
+        </div>
+    </section>
+
+    <div class="grid2">
+        <section class="panel" id="datos">
+            <h3><i class="fa-solid fa-user-pen"></i> Mis datos personales</h3>
+            <p class="sub">Puedes actualizar tu teléfono, correo y fecha de nacimiento. El DNI y el nombre solo los cambia recepción.</p>
+            <form th:if="${cliente != null}" th:action="@{/portal/datos}" th:object="${perfilForm}" method="post">
+                <div class="row2">
+                    <div class="field"><label>DNI</label><input type="text" th:value="${cliente.dni}" readonly></div>
+                    <div class="field"><label>Nombre completo</label>
+                        <input type="text" th:value="${cliente.nombres} + ' ' + ${cliente.apellidos}" readonly></div>
+                </div>
+                <div class="row2">
+                    <div class="field"><label>Teléfono</label>
+                        <input type="text" th:field="*{telefono}" maxlength="9" pattern="9[0-9]{8}" placeholder="9XXXXXXXX"></div>
+                    <div class="field"><label>Fecha de nacimiento</label>
+                        <input type="date" th:field="*{fechaNacimiento}" th:max="${hoy}"></div>
+                </div>
+                <div class="field"><label>Correo electrónico</label>
+                    <input type="email" th:field="*{correo}" maxlength="100"></div>
+                <button type="submit" class="btn-save"><i class="fa-solid fa-floppy-disk"></i> Guardar cambios</button>
+            </form>
+        </section>
+
+        <section class="panel" id="clave">
+            <h3><i class="fa-solid fa-key"></i> Cambiar contraseña</h3>
+            <p class="sub">Usa al menos 6 caracteres. Necesitas tu contraseña actual para confirmar el cambio.</p>
+            <form th:action="@{/portal/clave}" method="post" autocomplete="off">
+                <div class="field"><label>Contraseña actual</label><input type="password" name="claveActual" required></div>
+                <div class="row2">
+                    <div class="field"><label>Nueva contraseña</label><input type="password" name="claveNueva" minlength="6" maxlength="72" required></div>
+                    <div class="field"><label>Confirmar nueva</label><input type="password" name="claveConfirmar" minlength="6" maxlength="72" required></div>
+                </div>
+                <button type="submit" class="btn-save"><i class="fa-solid fa-lock"></i> Actualizar contraseña</button>
+            </form>
+        </section>
+    </div>
+
+    <div class="grid2">
+        <section class="panel">
+            <h3><i class="fa-solid fa-file-invoice-dollar" style="color:#22c55e;"></i> Historial de Pagos</h3>
+            <p class="sub">Tus últimos 10 pagos.</p>
+            <table class="mini-table" data-buscable>
+                <thead><tr><th>Fecha</th><th>Monto</th><th>Método</th><th>Estado</th></tr></thead>
+                <tbody>
+                <tr th:if="${pagos == null or #lists.isEmpty(pagos)}"><td colspan="4" class="muted center">No registras pagos aún.</td></tr>
+                <tr th:each="p : ${pagos}">
+                    <td th:text="${#temporals.format(p.fechaPago, 'yyyy-MM-dd HH:mm')}">2026-01-01</td>
+                    <td>S/ <span th:text="${#numbers.formatDecimal(p.monto, 1, 'COMMA', 2, 'POINT')}">0.00</span></td>
+                    <td th:text="${p.metodoPago}">EFECTIVO</td>
+                    <td th:text="${p.estado}">PAGADO</td>
+                </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="panel">
+            <h3><i class="fa-solid fa-gift" style="color:#eab308;"></i> Promociones del Gimnasio</h3>
+            <p class="sub">Vigentes hoy.</p>
+            <p class="muted center" style="font-size:13px;" th:if="${#lists.isEmpty(promos)}">No hay promociones activas por el momento.</p>
+            <div class="item" th:each="p : ${promos}">
+                <h4 style="color:var(--primary-red);" th:text="${p.nombre}">Promo</h4>
+                <p th:if="${p.descripcion != null}" th:text="${p.descripcion}">detalle</p>
+                <span style="font-size:11px; color:#22c55e; font-weight:600;"
+                      th:text="'Descuento: ' + (${p.tipoDescuento.name() == 'PORCENTAJE'} ? ${p.valorDescuento} + '%' : 'S/ ' + ${p.valorDescuento})">Descuento</span>
+            </div>
+        </section>
+    </div>
+</div>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

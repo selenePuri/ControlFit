@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head th:fragment="head(titulo)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="'ControlFit - ' + ${titulo}">ControlFit</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/admin-styles.css}">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+
+<body>
+
+<aside class="sidebar" th:fragment="sidebarAdmin(activo)">
+    <div>
+        <div class="brand"><h2>CONTROL<span>FIT</span></h2></div>
+        <nav class="menu">
+            <a th:href="@{/admin}" class="menu-item" th:classappend="${activo == 'dashboard'} ? 'active'"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
+            <a th:href="@{/admin/usuarios}" class="menu-item" th:classappend="${activo == 'usuarios'} ? 'active'"><i class="fa-solid fa-users-gear"></i> Usuarios</a>
+            <a th:href="@{/admin/empleados}" class="menu-item" th:classappend="${activo == 'empleados'} ? 'active'"><i class="fa-solid fa-id-card"></i> Empleados</a>
+            <a th:href="@{/admin/clientes}" class="menu-item" th:classappend="${activo == 'clientes'} ? 'active'"><i class="fa-solid fa-user-group"></i> Clientes</a>
+            <a th:href="@{/admin/membresias}" class="menu-item" th:classappend="${activo == 'membresias'} ? 'active'"><i class="fa-solid fa-address-card"></i> Membresías</a>
+            <a th:href="@{/admin/pagos}" class="menu-item" th:classappend="${activo == 'pagos'} ? 'active'"><i class="fa-solid fa-file-invoice-dollar"></i> Pagos</a>
+            <a th:href="@{/admin/devoluciones}" class="menu-item" th:classappend="${activo == 'devoluciones'} ? 'active'"><i class="fa-solid fa-rotate-left"></i> Devoluciones</a>
+            <a th:href="@{/admin/promociones}" class="menu-item" th:classappend="${activo == 'promociones'} ? 'active'"><i class="fa-solid fa-gift"></i> Promociones</a>
+            <a th:href="@{/reportes}" class="menu-item" th:classappend="${activo == 'reportes'} ? 'active'"><i class="fa-solid fa-file-pdf"></i> Reportes</a>
+        </nav>
+    </div>
+    <div class="sidebar-footer">
+        <form th:action="@{/logout}" method="post">
+            <button type="submit" class="btn-logout"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</button>
+        </form>
+    </div>
+</aside>
+
+<aside class="sidebar" th:fragment="sidebarRecepcion(activo)">
+    <div>
+        <div class="brand"><h2>CONTROL<span>FIT</span></h2></div>
+        <nav class="menu">
+            <a th:href="@{/recepcion}" class="menu-item"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
+            <a th:href="@{/recepcion#asistencias}" class="menu-item"><i class="fa-solid fa-door-open"></i> Asistencias</a>
+            <a th:href="@{/recepcion#clientes}" class="menu-item"><i class="fa-solid fa-user-plus"></i> Nuevo cliente</a>
+            <a th:href="@{/recepcion#membresias}" class="menu-item"><i class="fa-solid fa-address-card"></i> Membresías y cobros</a>
+            <a th:href="@{/reportes}" class="menu-item" th:classappend="${activo == 'reportes'} ? 'active'"><i class="fa-solid fa-file-pdf"></i> Reportes</a>
+        </nav>
+    </div>
+    <div class="sidebar-footer">
+        <form th:action="@{/logout}" method="post">
+            <button type="submit" class="btn-logout"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</button>
+        </form>
+    </div>
+</aside>
+
+<header class="topbar" th:fragment="topbar(titulo, subtitulo, etiqueta, icono)">
+    <div>
+        <h1 th:text="${titulo}">Título</h1>
+        <p th:text="${subtitulo}">Subtítulo</p>
+    </div>
+    <div class="user-badge"><i class="fa-solid" th:classappend="${icono}"></i> <span th:text="${etiqueta}">ADMIN</span></div>
+</header>
+
+<div th:fragment="flash" th:if="${flashMsg != null}" class="flash" th:classappend="${flashTipo == 'ok'} ? 'ok' : 'err'">
+    <i class="fa-solid" th:classappend="${flashTipo == 'ok'} ? 'fa-circle-check' : 'fa-triangle-exclamation'"></i>
+    <span th:text="${flashMsg}">mensaje</span>
+</div>
+
+</body>
+</html>

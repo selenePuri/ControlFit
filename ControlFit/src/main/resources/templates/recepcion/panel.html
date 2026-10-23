@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments :: head('Recepción')}"></head>
+<body>
+<div class="dashboard-container">
+
+    <aside class="sidebar">
+        <div>
+            <div class="brand"><h2>CONTROL<span>FIT</span></h2></div>
+            <nav class="menu">
+                <a href="#inicio" class="menu-item active"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
+                <a href="#asistencias" class="menu-item"><i class="fa-solid fa-door-open"></i> Asistencias</a>
+                <a href="#clientes" class="menu-item"><i class="fa-solid fa-user-plus"></i> Nuevo cliente</a>
+                <a href="#membresias" class="menu-item"><i class="fa-solid fa-address-card"></i> Membresías y cobros</a>
+                <a th:href="@{/reportes}" class="menu-item"><i class="fa-solid fa-file-pdf"></i> Reportes</a>
+            </nav>
+        </div>
+        <div class="sidebar-footer">
+            <form th:action="@{/logout}" method="post">
+                <button type="submit" class="btn-logout"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</button>
+            </form>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="topbar" id="inicio">
+            <div>
+                <h1>Módulo de Recepción</h1>
+                <p>Atendido por: <strong sec:authentication="name">recepcion</strong> · <span th:text="${hoy}">2026-01-01</span></p>
+            </div>
+            <div class="user-badge"><i class="fa-solid fa-headset"></i> <span>RECEPCIÓN</span></div>
+        </header>
+
+        <div th:replace="~{fragments :: flash}"></div>
+
+        <section class="stats-grid" data-modulo="inicio">
+            <div class="card-stat">
+                <div class="stat-icon red"><i class="fa-solid fa-users"></i></div>
+                <div class="stat-details"><h3>Clientes Activos</h3><p class="stat-number" th:text="${resumen.clientesActivos}">0</p></div>
+            </div>
+            <div class="card-stat">
+                <div class="stat-icon dark"><i class="fa-solid fa-door-open"></i></div>
+                <div class="stat-details"><h3>Asistencias Hoy</h3><p class="stat-number" th:text="${resumen.asistenciasHoy}">0</p></div>
+            </div>
+            <div class="card-stat">
+                <div class="stat-icon red"><i class="fa-solid fa-id-card-clip"></i></div>
+                <div class="stat-details"><h3>Membresías Vigentes</h3><p class="stat-number" th:text="${resumen.membresiasVigentes}">0</p></div>
+            </div>
+            <div class="card-stat">
+                <div class="stat-icon dark"><i class="fa-solid fa-dollar-sign"></i></div>
+                <div class="stat-details"><h3>Cobros de Hoy</h3>
+                    <p class="stat-number">S/ <span th:text="${#numbers.formatDecimal(resumen.cobrosDeHoy, 1, 'COMMA', 2, 'POINT')}">0.00</span></p></div>
+            </div>
+        </section>
+
+        <section class="quick-actions" data-modulo="inicio">
+            <h2>Gestión Rápida del Sistema</h2>
+            <div class="actions-grid">
+                <a href="#asistencias" class="action-card">
+                    <i class="fa-solid fa-door-open"></i><h4>Asistencias</h4>
+                    <p>Registrar entradas y salidas de los clientes.</p></a>
+                <a href="#clientes" class="action-card">
+                    <i class="fa-solid fa-user-plus"></i><h4>Nuevo cliente</h4>
+                    <p>Dar de alta a un cliente en mostrador.</p></a>
+                <a href="#membresias" class="action-card">
+                    <i class="fa-solid fa-address-card"></i><h4>Membresías y cobros</h4>
+                    <p>Vender una membresía y registrar el pago.</p></a>
+            </div>
+        </section>
+
+        <section class="modulo" data-modulo="asistencias">
+            <div class="controls-bar">
+                <span class="muted" th:text="${#lists.size(asistenciasHoy)} + ' asistencia(s) hoy'">0 asistencia(s) hoy</span>
+                <button type="button" class="btn-primary" data-modal-open="modalEntrada"><i class="fa-solid fa-right-to-bracket"></i> Registrar entrada</button>
+            </div>
+            <div class="table-container">
+                <table data-buscable>
+                    <thead><tr><th>DNI</th><th>Cliente</th><th>Entrada</th><th>Salida</th><th>Acción</th></tr></thead>
+                    <tbody>
+                    <tr th:if="${#lists.isEmpty(asistenciasHoy)}"><td colspan="5" class="center muted">Aún no hay asistencias registradas hoy.</td></tr>
+                    <tr th:each="a : ${asistenciasHoy}">
+                        <td th:text="${a.cliente.dni}">00000000</td>
+                        <td th:text="${a.cliente.nombres} + ' ' + ${a.cliente.apellidos}">Cliente</td>
+                        <td><span class="tag in" th:text="${#temporals.format(a.horaEntrada, 'HH:mm:ss')}">08:00:00</span></td>
+                        <td>
+                            <span th:if="${a.horaSalida == null}" class="muted">En el gimnasio</span>
+                            <span th:if="${a.horaSalida != null}" class="tag out" th:text="${#temporals.format(a.horaSalida, 'HH:mm:ss')}">09:00:00</span>
+                        </td>
+                        <td>
+                            <form th:if="${a.horaSalida == null}" th:action="@{/recepcion/salida}" method="post">
+                                <input type="hidden" name="idAsistencia" th:value="${a.idAsistencia}">
+                                <button type="submit" class="btn-small">Marcar salida</button>
+                            </form>
+                            <span th:if="${a.horaSalida != null}" class="muted">—</span>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="modulo" data-modulo="clientes">
+            <div class="controls-bar">
+                <span class="muted" th:text="${#lists.size(clientesTodos)} + ' cliente(s)'">0 cliente(s)</span>
+                <button type="button" class="btn-primary" data-modal-open="modalCliente"><i class="fa-solid fa-user-plus"></i> Nuevo Cliente</button>
+            </div>
+            <div class="table-container">
+                <table data-buscable>
+                    <thead><tr><th>ID</th><th>Nombres y Apellidos</th><th>DNI</th><th>Teléfono</th><th>Correo</th><th>Cuenta</th><th>Estado</th><th>Acciones</th></tr></thead>
+                    <tbody>
+                    <tr th:if="${#lists.isEmpty(clientesTodos)}"><td colspan="8" class="center muted">No hay clientes registrados.</td></tr>
+                    <tr th:each="c : ${clientesTodos}">
+                        <td th:text="'#C' + ${c.idCliente}">#C1</td>
+                        <td th:text="${c.nombres} + ' ' + ${c.apellidos}">Nombre</td>
+                        <td th:text="${c.dni}">00000000</td>
+                        <td th:text="${c.telefono != null} ? ${c.telefono} : '-'">-</td>
+                        <td th:text="${c.correo != null} ? ${c.correo} : '-'">-</td>
+                        <td th:text="${c.usuario != null} ? 'Sí' : 'No'">No</td>
+                        <td><span th:class="${c.estado} ? 'status-active' : 'status-inactive'" th:text="${c.estado} ? 'Activo' : 'Inactivo'">Activo</span></td>
+                        <td>
+                            <div class="acciones">
+                                <button type="button" class="btn-small btn-edit" data-modal-open="modalEditarCliente"
+                                        th:data-edit-action="@{/recepcion/clientes/{id}/editar(id=${c.idCliente})}"
+                                        th:data-nombres="${c.nombres}" th:data-apellidos="${c.apellidos}" th:data-dni="${c.dni}"
+                                        th:data-telefono="${c.telefono}" th:data-correo="${c.correo}"
+                                        th:data-fecha-nacimiento="${c.fechaNacimiento}"><i class="fa-solid fa-pen"></i> Editar</button>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="modulo" data-modulo="membresias">
+            <div class="controls-bar">
+                <span class="muted" th:text="${#lists.size(membresias)} + ' membresía(s)'">0 membresía(s)</span>
+                <button type="button" class="btn-primary" data-modal-open="modalMembresia"><i class="fa-solid fa-plus"></i> Vender Membresía</button>
+            </div>
+            <div class="table-container">
+                <table data-buscable>
+                    <thead><tr><th>ID</th><th>Cliente</th><th>Plan</th><th>Inicio</th><th>Fin</th><th>Precio final</th><th>Estado</th></tr></thead>
+                    <tbody>
+                    <tr th:if="${#lists.isEmpty(membresias)}"><td colspan="7" class="center muted">No hay membresías registradas.</td></tr>
+                    <tr th:each="m : ${membresias}">
+                        <td th:text="'#M' + ${m.idMembresia}">#M1</td>
+                        <td th:text="${m.cliente.nombres} + ' ' + ${m.cliente.apellidos}">Cliente</td>
+                        <td th:text="${#strings.replace(m.tipoMembresia.nombre, '_', ' ')}">MENSUAL</td>
+                        <td th:text="${m.fechaInicio}">2026-01-01</td>
+                        <td th:text="${m.fechaFin}">2026-01-30</td>
+                        <td>S/ <span th:text="${#numbers.formatDecimal(m.precioFinal, 1, 'COMMA', 2, 'POINT')}">0.00</span></td>
+                        <td><span th:class="${m.estado.name() == 'ACTIVA'} ? 'status-active' : 'status-inactive'" th:text="${m.estado}">ACTIVA</span></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h2 class="section-title" style="margin:10px 0 0;">Últimos pagos registrados</h2>
+            <div class="table-container">
+                <table data-buscable>
+                    <thead><tr><th>N°</th><th>Cliente</th><th>Plan</th><th>Fecha</th><th>Monto</th><th>Método</th><th>Estado</th></tr></thead>
+                    <tbody>
+                    <tr th:if="${#lists.isEmpty(pagosRecientes)}"><td colspan="7" class="center muted">Todavía no hay pagos.</td></tr>
+                    <tr th:each="p : ${pagosRecientes}">
+                        <td th:text="'#P' + ${p.idPago}">#P1</td>
+                        <td th:text="${p.membresia.cliente.nombres} + ' ' + ${p.membresia.cliente.apellidos}">Cliente</td>
+                        <td th:text="${#strings.replace(p.membresia.tipoMembresia.nombre, '_', ' ')}">MENSUAL</td>
+                        <td th:text="${#temporals.format(p.fechaPago, 'yyyy-MM-dd HH:mm')}">2026-01-01 10:00</td>
+                        <td>S/ <span th:text="${#numbers.formatDecimal(p.monto, 1, 'COMMA', 2, 'POINT')}">0.00</span></td>
+                        <td th:text="${p.metodoPago}">EFECTIVO</td>
+                        <td><span th:class="${p.estado.name() == 'PAGADO'} ? 'status-active' : 'status-inactive'" th:text="${p.estado}">PAGADO</span></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+</div>
+
+<div id="modalEntrada" class="modal-overlay">
+    <div class="modal-box">
+        <h3>Registrar entrada</h3>
+        <form th:action="@{/recepcion/entrada}" method="post">
+            <div class="field">
+                <label>DNI del cliente</label>
+                <input type="text" name="dni" list="lista-dni" maxlength="8" pattern="[0-9]{8}"
+                       placeholder="8 dígitos" required autocomplete="off">
+                <datalist id="lista-dni">
+                    <option th:each="c : ${clientes}" th:value="${c.dni}" th:text="${c.apellidos} + ', ' + ${c.nombres}"></option>
+                </datalist>
+            </div>
+            <p class="muted" style="font-size:12px;">Se valida que el cliente tenga una membresía vigente.</p>
+            <div class="modal-actions">
+                <button type="button" class="btn-ghost" data-modal-close>Cancelar</button>
+                <button type="submit" class="btn-save">Marcar entrada</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="modalCliente" class="modal-overlay">
+    <div class="modal-box">
+        <h3>Registrar Nuevo Cliente</h3>
+        <form th:action="@{/recepcion/clientes}" th:object="${clienteForm}" method="post">
+            <div class="row2">
+                <div class="field"><label>Nombres</label><input type="text" th:field="*{nombres}" maxlength="80" required></div>
+                <div class="field"><label>Apellidos</label><input type="text" th:field="*{apellidos}" maxlength="80" required></div>
+            </div>
+            <div class="row2">
+                <div class="field"><label>DNI</label><input type="text" th:field="*{dni}" maxlength="8" pattern="[0-9]{8}" required></div>
+                <div class="field"><label>Teléfono</label><input type="text" th:field="*{telefono}" maxlength="9" pattern="9[0-9]{8}" placeholder="9XXXXXXXX"></div>
+            </div>
+            <div class="row2">
+                <div class="field"><label>Correo</label><input type="email" th:field="*{correo}" maxlength="100"></div>
+                <div class="field"><label>Fecha de nacimiento</label><input type="date" th:field="*{fechaNacimiento}" th:max="${hoy}"></div>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-ghost" data-modal-close>Cancelar</button>
+                <button type="submit" class="btn-save">Guardar Cliente</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="modalEditarCliente" class="modal-overlay">
+    <div class="modal-box">
+        <h3>Editar Cliente</h3>
+        <form th:action="@{/recepcion/clientes/0/editar}" method="post">
+            <div class="row2">
+                <div class="field"><label>Nombres</label><input type="text" name="nombres" maxlength="80" required></div>
+                <div class="field"><label>Apellidos</label><input type="text" name="apellidos" maxlength="80" required></div>
+            </div>
+            <div class="row2">
+                <div class="field"><label>DNI</label><input type="text" name="dni" maxlength="8" pattern="[0-9]{8}" required></div>
+                <div class="field"><label>Teléfono</label><input type="text" name="telefono" maxlength="9" pattern="9[0-9]{8}" placeholder="9XXXXXXXX"></div>
+            </div>
+            <div class="row2">
+                <div class="field"><label>Correo</label><input type="email" name="correo" maxlength="100"></div>
+                <div class="field"><label>Fecha de nacimiento</label><input type="date" name="fechaNacimiento" th:max="${hoy}"></div>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-ghost" data-modal-close>Cancelar</button>
+                <button type="submit" class="btn-save">Guardar cambios</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="modalMembresia" class="modal-overlay">
+    <div class="modal-box">
+        <h3>Vender membresía y registrar pago</h3>
+        <p class="muted" th:if="${#lists.isEmpty(clientes) or #lists.isEmpty(tipos)}">
+            Necesitas al menos un cliente activo y un tipo de membresía activo para vender.</p>
+        <form th:unless="${#lists.isEmpty(clientes) or #lists.isEmpty(tipos)}"
+              th:action="@{/recepcion/membresias}" th:object="${membresiaForm}" method="post" data-venta>
+            <div class="field"><label>Cliente</label>
+                <select name="idCliente" required>
+                    <option value="">— Seleccione —</option>
+                    <option th:each="c : ${clientes}" th:value="${c.idCliente}" th:text="${c.dni} + ' · ' + ${c.apellidos} + ', ' + ${c.nombres}">cliente</option>
+                </select></div>
+            <div class="field"><label>Tipo de membresía</label>
+                <select name="idTipo" required>
+                    <option value="">— Seleccione —</option>
+                    <option th:each="t : ${tipos}" th:value="${t.idTipo}"
+                            th:data-precio="${t.precio}" th:data-dias="${t.duracionDias}"
+                            th:text="${#strings.replace(t.nombre, '_', ' ')} + ' · ' + ${t.duracionDias} + ' día(s) · S/ ' + ${t.precio}">plan</option>
+                </select></div>
+            <div class="field"><label>Promoción (opcional)</label>
+                <select name="idPromocion">
+                    <option value="">Sin promoción</option>
+                    <option th:each="p : ${promos}" th:value="${p.idPromocion}"
+                            th:data-valor="${p.valorDescuento}" th:data-tipo-descuento="${p.tipoDescuento.name()}"
+                            th:data-tipos="${#strings.listJoin(p.tiposMembresia.![idTipo], ',')}"
+                            th:text="${p.nombre} + ' (' + (${p.tipoDescuento.name() == 'PORCENTAJE'} ? ${p.valorDescuento} + '%' : 'S/ ' + ${p.valorDescuento}) + ')'">promo</option>
+                </select></div>
+            <div class="row2">
+                <div class="field"><label>Fecha de inicio</label>
+                    <input type="date" th:field="*{fechaInicio}" th:min="${hoy}" required></div>
+                <div class="field"><label>Método de pago</label>
+                    <select th:field="*{metodoPago}" required>
+                        <option th:each="mp : ${metodos}" th:value="${mp}" th:text="${mp}">EFECTIVO</option>
+                    </select></div>
+            </div>
+            <div class="resumen" style="margin-top:6px;">Seleccione un tipo de membresía para ver el total a cobrar.</div>
+            <div class="modal-actions">
+                <button type="button" class="btn-ghost" data-modal-close>Cancelar</button>
+                <button type="submit" class="btn-save">Guardar membresía y pago</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

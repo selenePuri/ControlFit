@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Membresías')}"></head>
+<body>
+<div class="dashboard-container">
+    <aside th:replace="~{fragments :: sidebarAdmin('membresias')}"></aside>
+    <main class="main-content">
+        <header th:replace="~{fragments :: topbar('Módulo de Membresías', 'Venta y control de planes de los socios', 'ADMIN', 'fa-shield-halved')}"></header>
+        <div th:replace="~{fragments :: flash}"></div>
+
+        <div class="controls-bar">
+            <span class="muted" th:text="${#lists.size(membresias)} + ' membresía(s)'">0</span>
+            <button type="button" class="btn-primary" data-modal-open="modalMembresia"><i class="fa-solid fa-plus"></i> Vender Membresía</button>
+        </div>
+
+        <div class="table-container">
+            <table data-buscable>
+                <thead><tr><th>ID</th><th>Cliente</th><th>Plan</th><th>Inicio</th><th>Fin</th><th>Precio final</th><th>Estado</th><th>Acciones</th></tr></thead>
+                <tbody>
+                <tr th:if="${#lists.isEmpty(membresias)}"><td colspan="8" class="center muted">No hay membresías registradas.</td></tr>
+                <tr th:each="m : ${membresias}">
+                    <td th:text="'#M' + ${m.idMembresia}">#M1</td>
+                    <td th:text="${m.cliente.nombres} + ' ' + ${m.cliente.apellidos}">Cliente</td>
+                    <td th:text="${#strings.replace(m.tipoMembresia.nombre, '_', ' ')}">MENSUAL</td>
+                    <td th:text="${m.fechaInicio}">2026-01-01</td>
+                    <td th:text="${m.fechaFin}">2026-01-30</td>
+                    <td>S/ <span th:text="${#numbers.formatDecimal(m.precioFinal, 1, 'COMMA', 2, 'POINT')}">0.00</span></td>
+                    <td><span th:class="${m.estado.name() == 'ACTIVA'} ? 'status-active' : 'status-inactive'" th:text="${m.estado}">ACTIVA</span></td>
+                    <td>
+                        <form th:if="${m.estado.name() == 'ACTIVA' or m.estado.name() == 'PENDIENTE'}"
+                              th:action="@{/admin/membresias/{id}/cancelar(id=${m.idMembresia})}" method="post"
+                              data-confirmar="Se cancelará la membresía. Sus pagos no se modifican ni se devuelve dinero (eso se registra en Devoluciones). ¿Continuar?">
+                            <button type="submit" class="btn-small">Cancelar</button></form>
+                        <span th:unless="${m.estado.name() == 'ACTIVA' or m.estado.name() == 'PENDIENTE'}" class="muted">—</span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+</div>
+
+<div id="modalMembresia" class="modal-overlay">
+    <div class="modal-box">
+        <h3>Vender membresía y registrar pago</h3>
+        <form th:action="@{/admin/membresias}" th:object="${form}" method="post" data-venta>
+            <div class="field"><label>Cliente</label>
+                <select name="idCliente" required>
+                    <option value="">— Seleccione —</option>
+                    <option th:each="c : ${clientes}" th:value="${c.idCliente}" th:text="${c.dni} + ' · ' + ${c.apellidos} + ', ' + ${c.nombres}">cliente</option>
+                </select></div>
+            <div class="field"><label>Tipo de membresía</label>
+                <select name="idTipo" required>
+                    <option value="">— Seleccione —</option>
+                    <option th:each="t : ${tipos}" th:value="${t.idTipo}"
+                            th:data-precio="${t.precio}" th:data-dias="${t.duracionDias}"
+                            th:text="${#strings.replace(t.nombre, '_', ' ')} + ' · ' + ${t.duracionDias} + ' día(s) · S/ ' + ${t.precio}">plan</option>
+                </select></div>
+            <div class="field"><label>Promoción (opcional)</label>
+                <select name="idPromocion">
+                    <option value="">Sin promoción</option>
+                    <option th:each="p : ${promos}" th:value="${p.idPromocion}"
+                            th:data-valor="${p.valorDescuento}" th:data-tipo-descuento="${p.tipoDescuento.name()}" th:data-tipos="${#strings.listJoin(p.tiposMembresia.![idTipo], ',')}"
+                            th:text="${p.nombre}">promo</option>
+                </select></div>
+            <div class="row2">
+                <div class="field"><label>Fecha de inicio</label>
+                    <input type="date" th:field="*{fechaInicio}" th:min="${hoy}" required></div>
+                <div class="field"><label>Método de pago</label>
+                    <select th:field="*{metodoPago}" required>
+                        <option th:each="mp : ${metodos}" th:value="${mp}" th:text="${mp}">EFECTIVO</option>
+                    </select></div>
+            </div>
+            <div class="resumen">Seleccione un tipo de membresía para ver el total a cobrar.</div>
+            <div class="modal-actions">
+                <button type="button" class="btn-ghost" data-modal-close>Cancelar</button>
+                <button type="submit" class="btn-save">Guardar membresía y pago</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>
