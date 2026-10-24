@@ -11,7 +11,7 @@ import com.cibertec.controlfit.model.Usuario;
 import com.cibertec.controlfit.repository.UsuarioRepository;
 
 import lombok.RequiredArgsConstructor;
-
+/*Seguridad*/
 @Service
 @RequiredArgsConstructor
 public class UsuarioDetailsService implements UserDetailsService, UserDetailsPasswordService {
