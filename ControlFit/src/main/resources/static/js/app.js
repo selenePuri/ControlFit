@@ -1,4 +1,11 @@
 document.querySelectorAll('[data-modal-open]').forEach(function (btn) {
+	
+	/*
+	 * ControlFit - JavaScript de las vistas del proyecto.
+	 * Gestiona modales, formularios, validaciones de envío,
+	 * cálculo de membresías, navegación y búsqueda en tablas.
+	 */
+	
     btn.addEventListener('click', function () {
         document.getElementById(btn.dataset.modalOpen).style.display = 'flex';
     });
