@@ -16,6 +16,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class EmpleadoForm {
+	//dto
 
     @NotBlank(message = "El DNI debe tener exactamente 8 dígitos.")
     @Pattern(regexp = "[0-9]{8}", message = "El DNI debe tener exactamente 8 dígitos.")

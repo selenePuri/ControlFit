@@ -14,6 +14,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+//dto
 
 @Getter
 @Setter
@@ -42,6 +43,5 @@ public class PromocionForm {
 
     private Boolean estado = Boolean.TRUE;
 
-    /** ids de tipo_membresia a los que aplica (el formulario JSP original no lo pedía). */
     private List<Integer> tiposMembresia = new ArrayList<>();
 }

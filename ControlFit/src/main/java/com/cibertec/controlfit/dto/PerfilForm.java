@@ -10,7 +10,9 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
-/** Datos que el cliente puede cambiar por sí mismo. */
+//dto
+
+
 @Getter
 @Setter
 public class PerfilForm {
