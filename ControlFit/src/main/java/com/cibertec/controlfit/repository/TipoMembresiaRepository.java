@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.cibertec.controlfit.model.TipoMembresia;
 import com.cibertec.controlfit.model.enums.TipoPlan;
+//Repositorios
 
 public interface TipoMembresiaRepository extends JpaRepository<TipoMembresia, Integer> {
 

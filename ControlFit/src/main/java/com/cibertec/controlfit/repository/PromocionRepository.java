@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.cibertec.controlfit.model.Promocion;
+//Repositorios
 
 public interface PromocionRepository extends JpaRepository<Promocion, Integer> {
 

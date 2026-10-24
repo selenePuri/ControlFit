@@ -7,7 +7,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.cibertec.controlfit.model.Asistencia;
-
+//Repositorios
 public interface AsistenciaRepository extends JpaRepository<Asistencia, Integer> {
 
     List<Asistencia> findByCliente_IdCliente(Integer idCliente);
