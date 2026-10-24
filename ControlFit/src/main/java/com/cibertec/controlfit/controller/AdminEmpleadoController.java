@@ -22,6 +22,7 @@ import com.cibertec.controlfit.service.EmpleadoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+/*Controladores*/
 
 @Controller
 @RequestMapping("/admin/empleados")

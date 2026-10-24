@@ -14,6 +14,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class MembresiaForm {
+	//dto
 
     @NotNull(message = "Seleccione un cliente y un tipo de membresía.")
     private Integer idCliente;

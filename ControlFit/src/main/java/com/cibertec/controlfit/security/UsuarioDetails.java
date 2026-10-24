@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.cibertec.controlfit.model.Usuario;
 import com.cibertec.controlfit.model.enums.Rol;
+/*Seguridad*/
 
 public class UsuarioDetails implements UserDetails {
 

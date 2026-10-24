@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.cibertec.controlfit.service.DashboardService;
 
 import lombok.RequiredArgsConstructor;
+/*Controladores*/
 
 @Controller
 @RequestMapping("/admin")

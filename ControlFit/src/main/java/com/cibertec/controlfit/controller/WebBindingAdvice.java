@@ -1,4 +1,5 @@
 package com.cibertec.controlfit.controller;
+/*Controladores*/
 
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.web.bind.WebDataBinder;

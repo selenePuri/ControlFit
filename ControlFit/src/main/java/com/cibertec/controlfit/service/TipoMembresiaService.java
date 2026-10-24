@@ -11,6 +11,7 @@ import com.cibertec.controlfit.model.enums.TipoPlan;
 import com.cibertec.controlfit.repository.TipoMembresiaRepository;
 
 import lombok.RequiredArgsConstructor;
+/*Logica de negocio*/
 
 @Service
 @Transactional

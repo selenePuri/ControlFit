@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+/*Seguridad*/
 
 @Component
 public class RolRedirectSuccessHandler implements AuthenticationSuccessHandler {

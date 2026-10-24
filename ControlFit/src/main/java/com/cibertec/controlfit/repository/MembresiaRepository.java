@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 
 import com.cibertec.controlfit.model.Membresia;
 import com.cibertec.controlfit.model.enums.EstadoMembresia;
+//Repositorios
 
 public interface MembresiaRepository extends JpaRepository<Membresia, Integer> {
 

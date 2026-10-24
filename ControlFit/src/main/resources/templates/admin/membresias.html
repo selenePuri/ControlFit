@@ -29,8 +29,9 @@
                     <td>
                         <form th:if="${m.estado.name() == 'ACTIVA' or m.estado.name() == 'PENDIENTE'}"
                               th:action="@{/admin/membresias/{id}/cancelar(id=${m.idMembresia})}" method="post"
-                              data-confirmar="Se cancelará la membresía. Sus pagos no se modifican ni se devuelve dinero (eso se registra en Devoluciones). ¿Continuar?">
-                            <button type="submit" class="btn-small">Cancelar</button></form>
+                              data-confirmar="Se cancelará la membresía. Los pagos registrados no se modificarán ni se procesarán devoluciones de dinero. ¿Continuar?">
+                            <button type="submit" class="btn-small">Cancelar</button>
+                        </form>
                         <span th:unless="${m.estado.name() == 'ACTIVA' or m.estado.name() == 'PENDIENTE'}" class="muted">—</span>
                     </td>
                 </tr>
@@ -48,28 +49,33 @@
                 <select name="idCliente" required>
                     <option value="">— Seleccione —</option>
                     <option th:each="c : ${clientes}" th:value="${c.idCliente}" th:text="${c.dni} + ' · ' + ${c.apellidos} + ', ' + ${c.nombres}">cliente</option>
-                </select></div>
+                </select>
+            </div>
             <div class="field"><label>Tipo de membresía</label>
                 <select name="idTipo" required>
                     <option value="">— Seleccione —</option>
                     <option th:each="t : ${tipos}" th:value="${t.idTipo}"
                             th:data-precio="${t.precio}" th:data-dias="${t.duracionDias}"
                             th:text="${#strings.replace(t.nombre, '_', ' ')} + ' · ' + ${t.duracionDias} + ' día(s) · S/ ' + ${t.precio}">plan</option>
-                </select></div>
+                </select>
+            </div>
             <div class="field"><label>Promoción (opcional)</label>
                 <select name="idPromocion">
                     <option value="">Sin promoción</option>
                     <option th:each="p : ${promos}" th:value="${p.idPromocion}"
                             th:data-valor="${p.valorDescuento}" th:data-tipo-descuento="${p.tipoDescuento.name()}" th:data-tipos="${#strings.listJoin(p.tiposMembresia.![idTipo], ',')}"
                             th:text="${p.nombre}">promo</option>
-                </select></div>
+                </select>
+            </div>
             <div class="row2">
                 <div class="field"><label>Fecha de inicio</label>
-                    <input type="date" th:field="*{fechaInicio}" th:min="${hoy}" required></div>
+                    <input type="date" th:field="*{fechaInicio}" th:min="${hoy}" required>
+                </div>
                 <div class="field"><label>Método de pago</label>
                     <select th:field="*{metodoPago}" required>
                         <option th:each="mp : ${metodos}" th:value="${mp}" th:text="${mp}">EFECTIVO</option>
-                    </select></div>
+                    </select>
+                </div>
             </div>
             <div class="resumen">Seleccione un tipo de membresía para ver el total a cobrar.</div>
             <div class="modal-actions">

@@ -15,6 +15,7 @@ import com.cibertec.controlfit.security.RolRedirectSuccessHandler;
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
+	//Configuración
 
     @Bean
     public PasswordEncoder passwordEncoder() {

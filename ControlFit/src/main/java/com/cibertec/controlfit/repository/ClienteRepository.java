@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.cibertec.controlfit.model.Cliente;
+//Repositorios
 
 public interface ClienteRepository extends JpaRepository<Cliente, Integer> {
 

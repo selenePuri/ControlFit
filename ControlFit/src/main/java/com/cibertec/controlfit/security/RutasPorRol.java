@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+/*Seguridad*/
 
 public final class RutasPorRol {
 

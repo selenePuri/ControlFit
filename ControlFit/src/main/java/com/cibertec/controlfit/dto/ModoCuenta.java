@@ -4,3 +4,4 @@ public enum ModoCuenta {
     NUEVA,
     EXISTENTE
 }
+//dto
