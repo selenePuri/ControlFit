@@ -23,6 +23,7 @@ import com.cibertec.controlfit.service.PagoService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+/*Controladores*/
 
 @Controller
 @RequestMapping("/admin/pagos")
