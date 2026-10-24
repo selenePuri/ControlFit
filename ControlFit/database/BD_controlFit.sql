@@ -106,25 +106,6 @@ create table tipo_membresia (
     constraint chk_tipo_membresia_precio check (precio > 0)
 );
 
-USE controlfit;
-
--- Tabla devolucion 
-CREATE TABLE IF NOT EXISTS devolucion (
-	id_devolucion int auto_increment,
-    id_pago int not null,
-    fecha_devolucion datetime not null,
-    monto decimal(10,2) not null,
-    motivo varchar(200),
-    estado varchar(20) not null default 'COMPLETADA',
-
-    constraint pk_devolucion primary key (id_devolucion),
-    constraint chk_devolucion_monto check (monto > 0),
-    constraint chk_devolucion_estado check (estado in
-			('PENDIENTE','COMPLETADA','ANULADA')),
-    constraint fk_devolucion_pago foreign key (id_pago) references pago(id_pago)
-    on update cascade
-    on delete restrict
-);
 
 -- Tabla promocion
 create table promocion (
