@@ -1,11 +1,8 @@
 # 🏋️ ControlFit — Sistema Web de Gestión de Gimnasio
 
-Sistema web desarrollado para facilitar la gestión administrativa de un gimnasio mediante la administración de clientes, 
-empleados, membresías, pagos, promociones y usuarios.
+Sistema web desarrollado para facilitar la gestión administrativa de un gimnasio mediante la administración de clientes, empleados, membresías, pagos, promociones, usuarios y asistencias.
 
-ControlFit fue desarrollado como proyecto académico de la carrera de Computación e Informática en Cibertec, aplicando 
-tecnologías Java y el framework Spring Boot para construir una aplicación web organizada por capas, con persistencia de 
-datos y control de acceso según roles.
+ControlFit fue desarrollado como proyecto académico de la carrera de Computación e Informática en Cibertec, aplicando tecnologías Java y el framework Spring Boot para construir una aplicación web organizada por capas, con persistencia de datos y control de acceso según roles.
 
 ## 📌 Características principales
 
@@ -15,8 +12,9 @@ datos y control de acceso según roles.
 - **Gestión de membresías:** administración de membresías y consulta de su vigencia.
 - **Gestión de pagos:** registro y consulta de pagos asociados a las membresías.
 - **Gestión de promociones:** administración de promociones disponibles.
+- **Control de asistencia:** registro y consulta de las asistencias de los clientes.
 - **Control de acceso:** autenticación y autorización según el rol del usuario.
-- **Portal del cliente:** consulta de la membresía propia, historial de pagos y promociones disponibles.
+- **Portal del cliente:** consulta de la membresía propia, historial de pagos, promociones disponibles y registros de asistencia propios, según las funcionalidades habilitadas.
 - **Reportes PDF:** generación de documentos PDF con información administrativa del sistema.
 
 ## 🛠️ Tecnologías utilizadas
@@ -39,10 +37,9 @@ datos y control de acceso según roles.
 
 ## 👥 Roles del sistema
 
-- **Administrador:** gestiona usuarios, empleados, clientes, membresías, pagos y promociones, de acuerdo con los permisos
-implementados.
-- **Recepcionista:** realiza operaciones relacionadas con clientes, membresías y pagos, según las funcionalidades habilitadas.
-- **Cliente:** consulta su propia membresía, su historial de pagos y las promociones disponibles.
+- **Administrador:** gestiona usuarios, empleados, clientes, membresías, pagos y promociones, de acuerdo con los permisos implementados.
+- **Recepcionista:** realiza operaciones relacionadas con clientes, membresías y pagos, y registra o consulta las asistencias de los clientes, según las funcionalidades habilitadas.
+- **Cliente:** consulta su propia membresía, su historial de pagos, las promociones disponibles y sus propios registros de asistencia, si esta consulta está habilitada en el sistema.
 
 ## 🏗️ Arquitectura del proyecto
 
@@ -89,8 +86,7 @@ Crear la base de datos `controlFit` en MySQL utilizando el script SQL disponible
 database/BD_controlFit.sql
 ```
 
-Verificar la configuración de conexión en `src/main/resources/application.properties`, incluyendo la URL JDBC, el usuario y 
-la contraseña de MySQL.
+Verificar la configuración de conexión en `src/main/resources/application.properties`, incluyendo la URL JDBC, el usuario y la contraseña de MySQL.
 
 ### 4. Ejecutar la aplicación
 
@@ -118,8 +114,7 @@ La disponibilidad de las funciones dependerá de la configuración de la aplicac
 
 ## 🌿 Control de versiones
 
-El desarrollo se organizó mediante Git y GitHub, utilizando ramas para distribuir el trabajo entre los integrantes e 
-integrar los avances del equipo.
+El desarrollo se organizó mediante Git y GitHub, utilizando ramas para distribuir el trabajo entre los integrantes e integrar los avances del equipo.
 
 Ramas de trabajo:
 
@@ -140,8 +135,7 @@ Proyecto académico desarrollado en equipo para la carrera de Computación e Inf
 
 ## 📚 Propósito académico
 
-Este proyecto permitió aplicar conocimientos de programación Java, desarrollo web con Spring Boot, persistencia con 
-JPA e Hibernate, gestión de bases de datos MySQL, seguridad web, control de versiones y trabajo colaborativo.
+Este proyecto permitió aplicar conocimientos de programación Java, desarrollo web con Spring Boot, persistencia con JPA e Hibernate, gestión de bases de datos MySQL, seguridad web, control de versiones y trabajo colaborativo.
 
 ---
 
