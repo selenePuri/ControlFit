@@ -22,6 +22,7 @@ import com.cibertec.controlfit.service.pdf.ReporteDatos;
 import com.cibertec.controlfit.service.pdf.ReportePdfGenerador;
 
 import lombok.RequiredArgsConstructor;
+/*Logica de negocio*/
 
 @Service
 @RequiredArgsConstructor
