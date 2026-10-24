@@ -15,6 +15,7 @@ import com.cibertec.controlfit.repository.ClienteRepository;
 import com.cibertec.controlfit.repository.UsuarioRepository;
 
 import lombok.RequiredArgsConstructor;
+/*Logica de negocio*/
 
 @Service
 @Transactional
