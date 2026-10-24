@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.cibertec.controlfit.model.RutinaCliente;
+//Repositorios
 
 public interface RutinaClienteRepository extends JpaRepository<RutinaCliente, Integer> {
 

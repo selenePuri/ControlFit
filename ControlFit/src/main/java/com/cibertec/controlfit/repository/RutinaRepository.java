@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.cibertec.controlfit.model.Rutina;
+//Repositorios
 
 public interface RutinaRepository extends JpaRepository<Rutina, Integer> {
 
