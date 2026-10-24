@@ -10,8 +10,8 @@ import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+//dto
 
-/** Registro público (autoservicio). El correo se usa como nombre de usuario, igual que antes. */
 @Getter
 @Setter
 public class RegistroClienteForm {

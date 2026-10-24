@@ -5,6 +5,7 @@ import java.security.MessageDigest;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+/*Seguridad*/
 
 public class LegacyAwarePasswordEncoder implements PasswordEncoder {
 
