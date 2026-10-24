@@ -15,6 +15,7 @@ import com.cibertec.controlfit.model.enums.TipoDescuento;
 import com.cibertec.controlfit.repository.PromocionRepository;
 
 import lombok.RequiredArgsConstructor;
+/*Logica de negocio*/
 
 @Service
 @Transactional
