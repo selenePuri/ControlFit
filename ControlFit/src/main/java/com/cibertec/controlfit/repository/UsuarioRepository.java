@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.cibertec.controlfit.model.Usuario;
 import com.cibertec.controlfit.model.enums.Rol;
+//Repositorios
 
 public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
 
