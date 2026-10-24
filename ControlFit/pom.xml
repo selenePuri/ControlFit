@@ -16,6 +16,7 @@
     <version>1.0.0-SNAPSHOT</version>
     <name>ControlFit</name>
     <description>Sistema de gestión de gimnasio - Lenguaje de Programación II</description>
+    <url>https://github.com/selenePuri/ControlFit</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
