@@ -14,6 +14,7 @@ import com.cibertec.controlfit.model.Pago;
 import com.cibertec.controlfit.model.enums.EstadoPago;
 
 import jakarta.persistence.LockModeType;
+//Repositorios
 
 public interface PagoRepository extends JpaRepository<Pago, Integer> {
 
