@@ -24,6 +24,7 @@ import com.cibertec.controlfit.service.ReporteService;
 
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+/*Controladores*/
 
 @Controller
 @RequestMapping("/reportes")
