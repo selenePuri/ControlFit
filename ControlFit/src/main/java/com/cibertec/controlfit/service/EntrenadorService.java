@@ -12,6 +12,7 @@ import com.cibertec.controlfit.model.enums.Rol;
 import com.cibertec.controlfit.repository.EntrenadorRepository;
 
 import lombok.RequiredArgsConstructor;
+/*Logica de negocio*/
 
 @Service
 @Transactional
